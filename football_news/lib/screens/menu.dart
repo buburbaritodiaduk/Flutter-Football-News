@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:football_news/widgets/left_drawer.dart';
 import 'package:football_news/widgets/news_card.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class InfoCard extends StatelessWidget {
   final String title;   
@@ -30,12 +32,28 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   final String nama = "Aryandana Pascua Patiung";
   final String npm = "2406438214";
   final String kelas = "F";
+
+  @override
+  void initState() {
+    super.initState();
+    final request = context.read<CookieRequest>();
+    if (!request.loggedIn) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, "/login");
+      });
+    }
+  }
 
   final List<ItemHomepage> items = [
     ItemHomepage("See Football News", Icons.newspaper),
@@ -45,6 +63,14 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    if (!request.loggedIn) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text(

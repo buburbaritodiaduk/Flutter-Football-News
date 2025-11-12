@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:football_news/screens/menu.dart';
+import 'package:football_news/screens/news_list.dart';
 import 'package:football_news/screens/newslist_form.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -65,12 +66,8 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyHomePage(),
+                    builder: (context) => const NewsListPage(),
                   ));
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(const SnackBar(
-                    content: Text("Kamu telah menekan tombol See Football News!")));
             },
           ),
         ],
