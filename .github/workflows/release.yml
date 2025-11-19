@@ -1,11 +1,10 @@
-# This is a basic workflow to help you get started with Actions
 name: Release
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push events but only for the main branch
   push:
-    branches: [master]
+    branches: [main]
 
 # Permissions needed for creating releases
 permissions:
@@ -24,7 +23,9 @@ jobs:
 
       - name: Get version from pubspec.yaml
         id: version
+        # Tambahkan working-directory
         run: echo "::set-output name=version::$(grep "version:" pubspec.yaml | cut -c10-)"
+        working-directory: ./football_news
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -36,12 +37,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+          # Tambahkan working-directory
+          working-directory: ./football_news
 
       - name: Get packages
         run: flutter pub get
+        # Tambahkan working-directory
+        working-directory: ./football_news
 
       - name: Build APK
         run: flutter build apk --split-per-abi
+        # Tambahkan working-directory
+        working-directory: ./football_news
 
       - name: Get current date
         id: date
@@ -55,7 +62,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: false
-          artifacts: "build/app/outputs/flutter-apk/*.apk"
+          # SESUAIKAN JALUR ARTIFACTS
+          # Jalur ini harus relatif dari root repository
+          artifacts: "./football_news/build/app/outputs/flutter-apk/*.apk"
           body: "Published at ${{ steps.date.outputs.date }}"
           name: "v${{ steps.version.outputs.version }} - ${{ steps.date.outputs.date }}"
           token: ${{ secrets.GITHUB_TOKEN }}
