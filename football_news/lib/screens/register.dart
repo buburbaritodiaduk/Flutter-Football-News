@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:football_news/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -22,18 +22,26 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Card(
             elevation: 8,
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              constraints: const BoxConstraints(maxWidth: 400),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   const Text(
                     'Register',
                     style: TextStyle(
@@ -51,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -70,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     obscureText: true,
                     validator: (value) {
@@ -90,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     obscureText: true,
                     validator: (value) {
@@ -107,6 +115,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
 
+                      // Check credentials
+                      // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
+                      // If you using chrome,  use URL http://localhost:8000       
                       final response = await request.postJson(
                           "http://localhost:8000/auth/register/",
                           jsonEncode({
@@ -116,39 +127,32 @@ class _RegisterPageState extends State<RegisterPage> {
                           }));
                       if (context.mounted) {
                         if (response['status'] == 'success') {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(const SnackBar(
-                                content: Text('Successfully registered!')));
-                          Navigator.pushReplacementNamed(context, "/login");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Successfully registered!'),
+                            ),
+                          );
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
                         } else {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(const SnackBar(
-                                content: Text('Failed to register!')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Failed to register!'),
+                            ),
+                          );
                         }
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
+                      minimumSize: Size(double.infinity, 50),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                     ),
                     child: const Text('Register'),
-                  ),
-                  const SizedBox(height: 36.0),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, "/login");
-                    },
-                    child: Text(
-                      'Already have an account? Login',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 16,
-                      ),
-                    ),
                   ),
                 ],
               ),
